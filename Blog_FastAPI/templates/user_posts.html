@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <h1 class="text-center">{{ posts[0].get('username') }}'s Posts</h1>
+            {% for post in posts %}
+                <div class="mx-1 mb-2 p-2 bg-warning">
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.body }}</p>
+                    <p>{{ post.username }}</p>
+                    <span class="text-muted">{{ post.date_created }}</span>
+                    {% for reply in post.replies %}
+                        <div class="mb-1 ms-4 bg-info p-2">
+                            <h5>{{ reply.body }}</h5>
+                            <p>{{ reply.username }}</p>
+                            <span class="text-muted">{{ reply.date_created }}</span>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            {% endfor %}
+    </div>
+{% endblock %}
