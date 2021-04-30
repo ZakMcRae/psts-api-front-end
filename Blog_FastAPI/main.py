@@ -7,7 +7,7 @@ app = fastapi.FastAPI(docs_url=None, redoc_url=None)
 
 
 def configure_routing():
-    app.include_router(user_routes.router, tags=["User"])
+    app.include_router(user_routes.router)
 
 
 if __name__ == "__main__":
