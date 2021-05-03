@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="mb-2">
+        <h1 class="text-center">Register</h1>
+    </div>
+
+    <div class="p-2 col-8 mx-auto">
+        <form class="form-group" action="" method="post">
+            <label class="form-label" for="username">Username</label>
+            <input class="form-control mb-2" type="text" id="username" name="username">
+
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control mb-2" type="email" id="email" name="email">
+
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control mb-2" type="password" id="password" name="password">
+
+            <label class="form-label" for="confirm_password">Confirm Password</label>
+            <input class="form-control mb-2" type="password" id="confirm_password" name="confirm_password">
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Client Side Validation for equal passwords  -->
+    <script>
+        let password = document.getElementById("password")
+            , confirm_password = document.getElementById("confirm_password");
+
+        function validatePassword() {
+            if (password.value !== confirm_password.value) {
+                confirm_password.setCustomValidity("Passwords Don't Match");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
+        }
+
+        password.onchange = validatePassword;
+        confirm_password.onkeyup = validatePassword;
+    </script>
+{% endblock %}

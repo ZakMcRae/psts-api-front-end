@@ -50,3 +50,30 @@ async def users_posts(request: Request, user_id: int):
             "title": f"{posts[0].get('username')}'s Posts",
         },
     )
+
+
+@router.get("/register")
+async def get_register(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
+
+@router.post("/register")
+async def post_register(request: Request):
+    form_data = await request.form()
+
+    body = {
+        "username": form_data.get("username"),
+        "email": form_data.get("email"),
+        "password": form_data.get("password"),
+    }
+
+    # send user data to backend API - create user endpoint
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.post("/user", json=body)
+
+    # todo round trip form data
+    # round trip form data to user if an 409 conflict
+    if resp.status_code == 409:
+        return templates.TemplateResponse("register.html", {"request": request})
+
+    return resp.json(), resp.status_code
