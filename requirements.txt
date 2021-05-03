@@ -4,3 +4,4 @@ httpx
 pydantic
 jinja2
 aiofiles
+python-multipart
