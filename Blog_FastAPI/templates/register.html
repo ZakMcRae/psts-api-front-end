@@ -7,11 +7,30 @@
 
     <div class="p-2 col-8 mx-auto">
         <form class="form-group" action="" method="post">
+
             <label class="form-label" for="username">Username</label>
-            <input class="form-control mb-2" type="text" id="username" name="username">
+            {% if form_data %}
+                <input class="form-control mb-2" type="text" id="username" name="username" value="{{ form_data.get('username') }}">
+                {% if form_data.get('username_error') %}
+                    <div>
+                        <p class="text-danger">{{ form_data.get('username_error') }}</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <input class="form-control mb-2" type="text" id="username" name="username">
+            {% endif %}
 
             <label class="form-label" for="email">Email</label>
-            <input class="form-control mb-2" type="email" id="email" name="email">
+            {% if form_data %}
+                <input class="form-control mb-2" type="email" id="email" name="email" value="{{ form_data.get('email') }}">
+                {% if form_data.get('email_error') %}
+                    <div>
+                        <p class="text-danger">{{ form_data.get('email_error') }}</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <input class="form-control mb-2" type="email" id="email" name="email">
+            {% endif %}
 
             <label class="form-label" for="password">Password</label>
             <input class="form-control mb-2" type="password" id="password" name="password">
@@ -25,10 +44,11 @@
         </form>
     </div>
 
-    <!-- Client Side Validation for equal passwords  -->
+    <!-- Client Side Validation for equal passwords and username length  -->
     <script>
         let password = document.getElementById("password")
-            , confirm_password = document.getElementById("confirm_password");
+            , confirm_password = document.getElementById("confirm_password"),
+                username = document.getElementById("username");
 
         function validatePassword() {
             if (password.value !== confirm_password.value) {
@@ -38,7 +58,17 @@
             }
         }
 
+        function validateUsernameLength() {
+            if (username.value.length < 3)
+            {
+                username.setCustomValidity("Username must be at least 3 characters long")
+            } else {
+                username.setCustomValidity("")
+            }
+        }
+
         password.onchange = validatePassword;
         confirm_password.onkeyup = validatePassword;
+        username.onkeyup = validateUsernameLength;
     </script>
 {% endblock %}
