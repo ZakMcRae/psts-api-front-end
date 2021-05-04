@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
 router = APIRouter()
@@ -53,13 +54,14 @@ async def users_posts(request: Request, user_id: int):
 
 
 @router.get("/register")
-async def get_register(request: Request):
+async def get_register_account(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
 
 @router.post("/register")
-async def post_register(request: Request):
+async def post_register_account(request: Request):
     form_data = await request.form()
+    form_data = dict(form_data)
 
     body = {
         "username": form_data.get("username"),
@@ -70,10 +72,22 @@ async def post_register(request: Request):
     # send user data to backend API - create user endpoint
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.post("/user", json=body)
+    response_detail = resp.json().get("detail")
 
-    # todo round trip form data
-    # round trip form data to user if an 409 conflict
+    # check for validation errors
     if resp.status_code == 409:
-        return templates.TemplateResponse("register.html", {"request": request})
+        if response_detail == "Username is taken, please try another":
+            form_data["username_error"] = response_detail
 
-    return resp.json(), resp.status_code
+        if response_detail == "Email is taken, please try another":
+            form_data["email_error"] = response_detail
+
+        # send back validation errors and form data
+        return templates.TemplateResponse(
+            "register.html", {"request": request, "form_data": form_data}
+        )
+
+    # redirect to login page and alert account created
+    response = RedirectResponse(url="/")
+    response.set_cookie("alert", "Account Created - Please log in")
+    return response
