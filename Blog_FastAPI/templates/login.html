@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="mb-2">
+        <h1 class="text-center">Login</h1>
+    </div>
+
+    <div class="p-2 col-8 mx-auto">
+        <form class="form-group" action="" method="post">
+
+            <label class="form-label" for="username">Username</label>
+            {% if form_data %}
+                <input class="form-control mb-2" type="text" id="username" name="username" value="{{ form_data.get('username') }}">
+                {% if form_data.get('username_error') %}
+                    <div>
+                        <p class="text-danger">{{ form_data.get('username_error') }}</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <input class="form-control mb-2" type="text" id="username" name="username">
+            {% endif %}
+
+
+            <label class="form-label" for="password">Password</label>
+            {% if form_data %}
+                <input class="form-control mb-2" type="password" id="password" name="password" value="{{ form_data.get('password') }}">
+                {% if form_data.get('password_error') %}
+                    <div>
+                        <p class="text-danger">{{ form_data.get('password_error') }}</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <input class="form-control mb-2" type="password" id="password" name="password">
+            {% endif %}
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
