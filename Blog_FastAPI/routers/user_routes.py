@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
@@ -60,7 +62,7 @@ async def users_posts(request: Request, user_id: int):
 
 @router.get("/register")
 async def get_register_account(request: Request):
-    """New account registration form - empty form"""
+    """New account registration form - empty form unless round tripped"""
     return templates.TemplateResponse("register.html", {"request": request})
 
 
@@ -98,3 +100,50 @@ async def post_register_account(request: Request):
     response = RedirectResponse(url="/", status_code=303)
     response.set_cookie("alert", "Account Created - Please log in", expires=10)
     return response
+
+
+@router.get("/login")
+async def get_login(request: Request):
+    """User login - empty form unless round tripped"""
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@router.post("/login")
+async def post_login(request: Request):
+    """User login - verify submitted info or send back"""
+    form_data = await request.form()
+    form_data = dict(form_data)
+
+    body = {
+        "username": form_data.get("username"),
+        "password": form_data.get("password"),
+    }
+
+    # send user data to backend API - create user endpoint
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.post("/token", data=body)
+
+    # check for incorrect username or password
+    if resp.status_code == 401:
+        form_data["username_error"] = "Invalid Username or Password"
+
+        # send back validation errors and form data
+        return templates.TemplateResponse(
+            "login.html", {"request": request, "form_data": form_data}
+        )
+
+    token_info = resp.json()
+
+    # redirect home, alert logged in, give token as cookie
+    response = RedirectResponse(url="/", status_code=303)
+    response.set_cookie("alert", "Logged in", expires=10)
+    response.set_cookie(
+        "jlt",
+        token_info.get("access_token"),
+        expires=int(
+            token_info.get("expires_at") - datetime.datetime.utcnow().timestamp()
+        ),
+    )
+    return response
+
+    # todo - check expiry time is correct - didn't seem to like floats
