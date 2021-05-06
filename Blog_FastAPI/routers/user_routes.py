@@ -95,6 +95,6 @@ async def post_register_account(request: Request):
         )
 
     # redirect to login page and alert account created
-    response = RedirectResponse(url="/")
-    response.set_cookie("alert", "Account Created - Please log in")
+    response = RedirectResponse(url="/", status_code=303)
+    response.set_cookie("alert", "Account Created - Please log in", expires=10)
     return response
