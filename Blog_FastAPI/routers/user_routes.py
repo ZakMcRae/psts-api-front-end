@@ -96,7 +96,7 @@ async def post_register_account(request: Request):
 
     # redirect to login page and alert account created
     response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie("alert", "Account Created - Please log in", expires=3)
+    response.set_cookie("alert", "Account Created - Please log in", max_age=3)
     return response
 
 
@@ -134,6 +134,24 @@ async def post_login(request: Request):
 
     # redirect home, alert logged in, give token as cookie (apx 30 day expiry = 2583360s)
     response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie("alert", "Logged in", expires=3)
+    response.set_cookie("alert", "Logged in", max_age=3)
     response.set_cookie("jlt", token_info.get("access_token"), expires=2583360)
     return response
+
+
+@router.get("/logout")
+def get_logout(request: Request):
+    """Logout user by deleting token cookie or redirect if not logged in"""
+
+    if request.cookies.get("jlt"):
+        response = RedirectResponse(url="/", status_code=303)
+        response.set_cookie("alert", "Logged out", max_age=3)
+        response.set_cookie("jlt", "expired", max_age=0)
+
+        return response
+
+    else:
+        response = RedirectResponse(url="/", status_code=303)
+        response.set_cookie("alert", "You are not currently logged in", max_age=3)
+
+        return response
