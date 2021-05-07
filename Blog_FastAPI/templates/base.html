@@ -24,6 +24,30 @@
     </div>
 {% endif %}
 
+
+<nav class="navbar navbar-expand-md py-0">
+    <div class="container-fluid bg-main-mid py-2 rounded-2">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+            <div class="navbar-nav me-auto">
+                <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+                <a class="nav-link active" href="{{ url_for('get_register_account') }}">Register</a>
+                <a class="nav-link active" href="{{ url_for('get_login') }}">Login</a>
+                <a class="nav-link active" href="{{ url_for('get_logout') }}">Logout</a>
+                <a class="nav-link active" href="{{ url_for('get_test') }}">Test</a>
+                <a class="nav-link active" href="{{ url_for('get_alert') }}">Alert</a>
+                <a class="nav-link active" href="{{ url_for('get_new_post') }}">New Post</a>
+
+                </div>
+        </div>
+    </div>
+</nav>
+
+
 {% block content %}{% endblock %}
 
 
