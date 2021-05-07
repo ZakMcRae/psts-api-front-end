@@ -23,8 +23,7 @@
 
             <label class="form-label" for="body">Body</label>
             {% if form_data %}
-                <textarea class="form-control mb-2" type="text" id="body" name="body"
-                          content="{{ form_data.get('body') }}"></textarea>
+                <textarea class="form-control mb-2" type="text" id="body" name="body">{{ form_data.get('body') }}</textarea>
                 {% if form_data.get('body_error') %}
                     <div>
                         <p class="text-danger">{{ form_data.get('body_error') }}</p>
@@ -39,5 +38,4 @@
             </div>
         </form>
     </div>
-
 {% endblock %}
