@@ -96,13 +96,20 @@ async def post_register_account(request: Request):
 
     # redirect to login page and alert account created
     response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie("alert", "Account Created - Please log in", max_age=3)
+    response.set_cookie("alert", "Account Created - Please log in", max_age=1)
     return response
 
 
 @router.get("/login")
 async def get_login(request: Request):
     """User login - empty form unless round tripped"""
+    # if logged in alert and redirect home
+    if request.cookies.get("jlt"):
+        response = RedirectResponse(url="/", status_code=303)
+        response.set_cookie("alert", "Already Logged In", max_age=1)
+
+        return response
+
     return templates.TemplateResponse("login.html", {"request": request})
 
 
@@ -134,7 +141,7 @@ async def post_login(request: Request):
 
     # redirect home, alert logged in, give token as cookie (apx 30 day expiry = 2583360s)
     response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie("alert", "Logged in", max_age=3)
+    response.set_cookie("alert", "Logged in", max_age=1)
     response.set_cookie("jlt", token_info.get("access_token"), expires=2583360)
     return response
 
@@ -145,13 +152,13 @@ async def get_logout(request: Request):
 
     if request.cookies.get("jlt"):
         response = RedirectResponse(url="/", status_code=303)
-        response.set_cookie("alert", "Logged out", max_age=3)
+        response.set_cookie("alert", "Logged out", max_age=1)
         response.set_cookie("jlt", "expired", max_age=0)
 
         return response
 
     else:
         response = RedirectResponse(url="/", status_code=303)
-        response.set_cookie("alert", "You are not currently logged in", max_age=3)
+        response.set_cookie("alert", "You are not currently logged in", max_age=1)
 
         return response
