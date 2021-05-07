@@ -22,16 +22,7 @@
 
 
             <label class="form-label" for="password">Password</label>
-            {% if form_data %}
-                <input class="form-control mb-2" type="password" id="password" name="password" value="{{ form_data.get('password') }}">
-                {% if form_data.get('password_error') %}
-                    <div>
-                        <p class="text-danger">{{ form_data.get('password_error') }}</p>
-                    </div>
-                {% endif %}
-            {% else %}
-                <input class="form-control mb-2" type="password" id="password" name="password">
-            {% endif %}
+            <input class="form-control mb-2" type="password" id="password" name="password">
 
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Login</button>
