@@ -140,7 +140,7 @@ async def post_login(request: Request):
 
 
 @router.get("/logout")
-def get_logout(request: Request):
+async def get_logout(request: Request):
     """Logout user by deleting token cookie or redirect if not logged in"""
 
     if request.cookies.get("jlt"):
