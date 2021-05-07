@@ -4,7 +4,8 @@ from fastapi.staticfiles import StaticFiles
 
 from Blog_FastAPI.routers import user_routes, post_routes, dev_routes
 
-app = fastapi.FastAPI(docs_url=None, redoc_url=None)
+# todo turn off docs urls after dev work finished - uncomment below
+app = fastapi.FastAPI()  # docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
