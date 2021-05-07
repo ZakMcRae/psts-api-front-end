@@ -1,8 +1,6 @@
-import datetime
-
 from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 from httpx import AsyncClient
 
 router = APIRouter()
@@ -98,7 +96,7 @@ async def post_register_account(request: Request):
 
     # redirect to login page and alert account created
     response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie("alert", "Account Created - Please log in", expires=10)
+    response.set_cookie("alert", "Account Created - Please log in", expires=3)
     return response
 
 
@@ -134,16 +132,8 @@ async def post_login(request: Request):
 
     token_info = resp.json()
 
-    # redirect home, alert logged in, give token as cookie
+    # redirect home, alert logged in, give token as cookie (apx 30 day expiry = 2583360s)
     response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie("alert", "Logged in", expires=10)
-    response.set_cookie(
-        "jlt",
-        token_info.get("access_token"),
-        expires=int(
-            token_info.get("expires_at") - datetime.datetime.utcnow().timestamp()
-        ),
-    )
+    response.set_cookie("alert", "Logged in", expires=3)
+    response.set_cookie("jlt", token_info.get("access_token"), expires=2583360)
     return response
-
-    # todo - check expiry time is correct - didn't seem to like floats
