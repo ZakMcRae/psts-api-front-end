@@ -29,11 +29,9 @@ async def post_new_post(request: Request, token: str = Depends(verify_logged_in)
 
     # check for blank title or body and round trip info and errors
     if form_data.get("title") == "":
-        print("title error")
         form_data["title_error"] = "Title is blank"
 
     if form_data.get("body") == "":
-        print("body error")
         form_data["body_error"] = "Body is blank"
 
     if form_data.get("title_error") or form_data.get("body_error"):
@@ -63,13 +61,36 @@ async def post_new_post(request: Request, token: str = Depends(verify_logged_in)
     return response
 
 
+@router.get("/post/{post_id}/delete")
+async def get_delete_post(
+    request: Request, post_id: int, token: str = Depends(verify_logged_in)
+):
+    """Delete Post - pass data to backend api and handle any errors"""
+    header = {"Authorization": f"Bearer {token}"}
+
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.delete(f"/post/{post_id}", headers=header)
+
+    # catch error for post belonging to another user
+    if resp.status_code == 401:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="This post belongs to another user",
+        )
+
+    # success - redirect home and alert user
+    response = RedirectResponse(url="/", status_code=303)
+    response.set_cookie("alert", "Post Deleted", max_age=1)
+    return response
+
+
 # noinspection PyUnusedLocal
 # token not used by dependency confirms login
 @router.get("/post/{post_id}/edit")
 async def get_update_post(
     request: Request, post_id: int, token: str = Depends(verify_logged_in)
 ):
-    """Update Post - filled form with existing post info"""
+    """Update Post - filled form with existing post info for user to modify"""
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(f"/post/{post_id}")
 
@@ -92,11 +113,9 @@ async def post_update_post(
 
     # check for blank title or body and round trip info and errors
     if form_data.get("title") == "":
-        print("title error")
         form_data["title_error"] = "Title is blank"
 
     if form_data.get("body") == "":
-        print("body error")
         form_data["body_error"] = "Body is blank"
 
     if form_data.get("title_error") or form_data.get("body_error"):
@@ -121,7 +140,7 @@ async def post_update_post(
             detail="This post belongs to another user",
         )
 
-    # success - redirect to created post
+    # success - redirect to updated post
     response = RedirectResponse(url=f"/post/{post_id}", status_code=303)
     return response
 
