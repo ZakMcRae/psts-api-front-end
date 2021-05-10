@@ -17,5 +17,5 @@ async def get_test(request: Request, token: str = Depends(verify_logged_in)):
 async def get_alert():
     """dev function - delete later"""
     response = RedirectResponse(url="/")
-    response.set_cookie("alert", "test alert", expires=3)
+    response.set_cookie("alert", "test alert", max_age=1)
     return response
