@@ -121,7 +121,6 @@ async def post_update_post(
             detail="This post belongs to another user",
         )
 
-    # todo - issue with backend API - Async SQLAlchemy not properly updating item in db
     # success - redirect to created post
     response = RedirectResponse(url=f"/post/{post_id}", status_code=303)
     return response
