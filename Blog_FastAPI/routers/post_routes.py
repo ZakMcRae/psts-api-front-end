@@ -150,6 +150,12 @@ async def get_post(request: Request, post_id: int):
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(f"/post/{post_id}")
 
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This post does not exist",
+        )
+
     posts = resp.json()
 
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
