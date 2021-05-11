@@ -25,7 +25,7 @@ async def home(request: Request):
         post["replies"] = resp.json()
 
     return templates.TemplateResponse(
-        "user/home.html", {"request": request, "posts": posts, "title": "Home"}
+        "post/show_posts.html", {"request": request, "posts": posts, "title": "Home"}
     )
 
 
@@ -49,7 +49,7 @@ async def users_posts(request: Request, user_id: int):
         post["replies"] = resp.json()
 
     return templates.TemplateResponse(
-        "user/user_posts.html",
+        "post/show_posts.html",
         {
             "request": request,
             "posts": posts,
