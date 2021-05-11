@@ -62,9 +62,7 @@ async def post_new_post(request: Request, token: str = Depends(verify_logged_in)
 
 
 @router.get("/post/{post_id}/delete")
-async def get_delete_post(
-    request: Request, post_id: int, token: str = Depends(verify_logged_in)
-):
+async def get_delete_post(post_id: int, token: str = Depends(verify_logged_in)):
     """Delete Post - pass data to backend api and handle any errors"""
     header = {"Authorization": f"Bearer {token}"}
 
@@ -154,6 +152,8 @@ async def post_update_post(
 
 @router.get("/post/{post_id}")
 async def get_post(request: Request, post_id: int):
+    """Display single post with up to 25 replies"""
+    # get posts
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(f"/post/{post_id}")
 
@@ -165,17 +165,21 @@ async def get_post(request: Request, post_id: int):
 
     posts = resp.json()
 
+    # get replies
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(
             f"/post/{post_id}/replies?skip=0&limit=25&sort-newest-first=false"
         )
     posts["replies"] = resp.json()
 
+    # put into list to work with template (template expects list of posts)
+    posts = [posts]
+
     return templates.TemplateResponse(
-        "post/single_post.html",
+        "post/show_posts.html",
         {
             "request": request,
             "posts": posts,
-            "title": f"{posts.get('title')}",
+            "title": f"{posts[0].get('title')}",
         },
     )
