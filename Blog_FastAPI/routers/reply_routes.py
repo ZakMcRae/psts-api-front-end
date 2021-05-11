@@ -16,7 +16,7 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/post/{post_id}/reply/new")
 async def get_new_reply(request: Request, token: str = Depends(verify_logged_in)):
     """Create New Reply - empty form unless round tripped"""
-    return templates.TemplateResponse("new_reply.html", {"request": request})
+    return templates.TemplateResponse("reply/new_reply.html", {"request": request})
 
 
 # noinspection DuplicatedCode
@@ -33,7 +33,7 @@ async def reply_new_reply(
     if form_data.get("body") == "":
         form_data["body_error"] = "Body is blank"
         return templates.TemplateResponse(
-            "new_reply.html", {"request": request, "form_data": form_data}
+            "reply/new_reply.html", {"request": request, "form_data": form_data}
         )
 
     # send user data to backend API - create user endpoint
@@ -88,10 +88,17 @@ async def get_update_reply(
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(f"/reply/{reply_id}")
 
+    # if reply does not exist raise 404 error
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This reply does not exist",
+        )
+
     form_data = resp.json()
 
     return templates.TemplateResponse(
-        "update_reply.html", {"request": request, "form_data": form_data}
+        "reply/update_reply.html", {"request": request, "form_data": form_data}
     )
 
 
@@ -109,7 +116,7 @@ async def post_update_reply(
     if form_data.get("body") == "":
         form_data["body_error"] = "Body is blank"
         return templates.TemplateResponse(
-            "update_reply.html", {"request": request, "form_data": form_data}
+            "reply/update_reply.html", {"request": request, "form_data": form_data}
         )
 
     # send user data to backend API - create user endpoint

@@ -16,7 +16,7 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/post/new")
 async def get_new_post(request: Request, token: str = Depends(verify_logged_in)):
     """Create New Post - empty form unless round tripped"""
-    return templates.TemplateResponse("new_post.html", {"request": request})
+    return templates.TemplateResponse("post/new_post.html", {"request": request})
 
 
 # noinspection DuplicatedCode
@@ -36,7 +36,7 @@ async def post_new_post(request: Request, token: str = Depends(verify_logged_in)
 
     if form_data.get("title_error") or form_data.get("body_error"):
         return templates.TemplateResponse(
-            "new_post.html", {"request": request, "form_data": form_data}
+            "post/new_post.html", {"request": request, "form_data": form_data}
         )
 
     # send user data to backend API - create user endpoint
@@ -94,10 +94,17 @@ async def get_update_post(
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(f"/post/{post_id}")
 
+    # if post does not exist raise 404 error
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This post does not exist",
+        )
+
     form_data = resp.json()
 
     return templates.TemplateResponse(
-        "update_post.html", {"request": request, "form_data": form_data}
+        "post/update_post.html", {"request": request, "form_data": form_data}
     )
 
 
@@ -120,7 +127,7 @@ async def post_update_post(
 
     if form_data.get("title_error") or form_data.get("body_error"):
         return templates.TemplateResponse(
-            "update_post.html", {"request": request, "form_data": form_data}
+            "post/update_post.html", {"request": request, "form_data": form_data}
         )
 
     # send user data to backend API - create user endpoint
@@ -165,7 +172,7 @@ async def get_post(request: Request, post_id: int):
     posts["replies"] = resp.json()
 
     return templates.TemplateResponse(
-        "single_post.html",
+        "post/single_post.html",
         {
             "request": request,
             "posts": posts,

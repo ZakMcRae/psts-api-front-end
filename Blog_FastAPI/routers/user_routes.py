@@ -25,7 +25,7 @@ async def home(request: Request):
         post["replies"] = resp.json()
 
     return templates.TemplateResponse(
-        "home.html", {"request": request, "posts": posts, "title": "Home"}
+        "user/home.html", {"request": request, "posts": posts, "title": "Home"}
     )
 
 
@@ -49,7 +49,7 @@ async def users_posts(request: Request, user_id: int):
         post["replies"] = resp.json()
 
     return templates.TemplateResponse(
-        "user_posts.html",
+        "user/user_posts.html",
         {
             "request": request,
             "posts": posts,
@@ -61,7 +61,7 @@ async def users_posts(request: Request, user_id: int):
 @router.get("/register")
 async def get_register_account(request: Request):
     """New account registration form - empty form unless round tripped"""
-    return templates.TemplateResponse("register.html", {"request": request})
+    return templates.TemplateResponse("user/register.html", {"request": request})
 
 
 @router.post("/register")
@@ -91,7 +91,7 @@ async def post_register_account(request: Request):
 
         # send back validation errors and form data
         return templates.TemplateResponse(
-            "register.html", {"request": request, "form_data": form_data}
+            "user/register.html", {"request": request, "form_data": form_data}
         )
 
     # redirect to login page and alert account created
@@ -110,7 +110,7 @@ async def get_login(request: Request):
 
         return response
 
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("user/login.html", {"request": request})
 
 
 @router.post("/login")
@@ -134,7 +134,7 @@ async def post_login(request: Request):
 
         # send back validation errors and form data
         return templates.TemplateResponse(
-            "login.html", {"request": request, "form_data": form_data}
+            "user/login.html", {"request": request, "form_data": form_data}
         )
 
     token_info = resp.json()
