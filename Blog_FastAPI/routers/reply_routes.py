@@ -56,9 +56,7 @@ async def reply_new_reply(
 
 
 @router.get("/reply/{reply_id}/delete")
-async def get_delete_reply(
-    request: Request, reply_id: int, token: str = Depends(verify_logged_in)
-):
+async def get_delete_reply(reply_id: int, token: str = Depends(verify_logged_in)):
     """Delete Reply - pass data to backend api and handle any errors"""
     header = {"Authorization": f"Bearer {token}"}
 
