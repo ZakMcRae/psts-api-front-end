@@ -43,7 +43,7 @@ async def reply_new_reply(
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.post(f"/post/{post_id}/reply", json=body, headers=header)
 
-    # check for incorrect username or password
+    # catch unexpected errors
     if resp.status_code != 201:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
