@@ -38,6 +38,7 @@
 
             <div class="navbar-nav">
                 {% if request.cookies.get('jlt') %}
+                    <a class="nav-link active" href="{{ url_for('get_user_account') }}">Account</a>
                     <a class="nav-link active" href="{{ url_for('get_logout') }}">Logout</a>
                 {% else %}
                     <a class="nav-link active" href="{{ url_for('get_register_account') }}">Register</a>
