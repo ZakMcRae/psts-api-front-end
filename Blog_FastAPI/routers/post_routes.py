@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 # noinspection PyUnusedLocal
-# token not used by dependency confirms login
+# token not used by dependency - confirms login
 @router.get("/post/new")
 async def get_new_post(request: Request, token: str = Depends(verify_logged_in)):
     """Create New Post - empty form unless round tripped"""
@@ -83,7 +83,7 @@ async def get_delete_post(post_id: int, token: str = Depends(verify_logged_in)):
 
 
 # noinspection PyUnusedLocal
-# token not used by dependency confirms login
+# token not used by dependency - confirms login
 @router.get("/post/{post_id}/edit")
 async def get_update_post(
     request: Request, post_id: int, token: str = Depends(verify_logged_in)

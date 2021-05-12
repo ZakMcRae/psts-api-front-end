@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 # noinspection PyUnusedLocal
-# token not used by dependency confirms login
+# token not used by dependency - confirms login
 @router.get("/post/{post_id}/reply/new")
 async def get_new_reply(request: Request, token: str = Depends(verify_logged_in)):
     """Create New Reply - empty form unless round tripped"""
@@ -77,7 +77,7 @@ async def get_delete_reply(reply_id: int, token: str = Depends(verify_logged_in)
 
 
 # noinspection PyUnusedLocal
-# token not used by dependency confirms login
+# token not used by dependency - confirms login
 @router.get("/reply/{reply_id}/edit")
 async def get_update_reply(
     request: Request, reply_id: int, token: str = Depends(verify_logged_in)
