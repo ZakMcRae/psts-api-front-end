@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from httpx import AsyncClient
 
-from Blog_FastAPI.util import get_user_info
+from Blog_FastAPI.util import get_user_info, verify_logged_in
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -36,7 +36,7 @@ async def home(request: Request):
 
 
 @router.get("/user/{user_id}")
-async def users_posts(request: Request, user_id: int):
+async def get_users_posts(request: Request, user_id: int):
     """display specific user's recent posts with 3 replies each"""
     # get posts
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
@@ -172,3 +172,33 @@ async def get_logout(request: Request):
         response.set_cookie("alert", "You are not currently logged in", max_age=1)
 
         return response
+
+
+# noinspection PyUnusedLocal
+# token not used by dependency - confirms login
+@router.get("/account")
+async def get_user_account(request: Request, token: str = Depends(verify_logged_in)):
+    """User account page - Display user info and relevant links. Also displays list of followers and following users"""
+    user_info = await get_user_info(request)
+
+    # get followers
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.get(f"/user/{user_info.get('id')}/followers")
+
+    followers = resp.json()
+
+    # get following
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.get(f"/user/{user_info.get('id')}/following")
+
+    following = resp.json()
+
+    return templates.TemplateResponse(
+        "user/account.html",
+        {
+            "request": request,
+            "user_info": user_info,
+            "followers": followers,
+            "following": following,
+        },
+    )
