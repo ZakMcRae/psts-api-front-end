@@ -4,7 +4,7 @@ from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 from starlette import status
 
-from Blog_FastAPI.util import verify_logged_in
+from Blog_FastAPI.util import verify_logged_in, get_user_info
 
 router = APIRouter()
 
@@ -175,11 +175,15 @@ async def get_post(request: Request, post_id: int):
     # put into list to work with template (template expects list of posts)
     posts = [posts]
 
+    # get user info to display options for editing or deleting own posts/replies
+    user_info = await get_user_info(request)
+
     return templates.TemplateResponse(
         "post/show_posts.html",
         {
             "request": request,
             "posts": posts,
             "title": f"{posts[0].get('title')}",
+            "user_info": user_info,
         },
     )

@@ -3,6 +3,8 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from httpx import AsyncClient
 
+from Blog_FastAPI.util import get_user_info
+
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
@@ -24,8 +26,12 @@ async def home(request: Request):
             )
         post["replies"] = resp.json()
 
+    # get user info to display options for editing or deleting own posts/replies
+    user_info = await get_user_info(request)
+
     return templates.TemplateResponse(
-        "post/show_posts.html", {"request": request, "posts": posts, "title": "Home"}
+        "post/show_posts.html",
+        {"request": request, "posts": posts, "title": "Home", "user_info": user_info},
     )
 
 
@@ -48,12 +54,16 @@ async def users_posts(request: Request, user_id: int):
             )
         post["replies"] = resp.json()
 
+    # get user info to display options for editing or deleting own posts/replies
+    user_info = await get_user_info(request)
+
     return templates.TemplateResponse(
         "post/show_posts.html",
         {
             "request": request,
             "posts": posts,
             "title": f"{posts[0].get('username')}'s Posts",
+            "user_info": user_info,
         },
     )
 
