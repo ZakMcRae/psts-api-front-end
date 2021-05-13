@@ -35,7 +35,7 @@ async def home(request: Request):
     )
 
 
-@router.get("/user/{user_id}")
+@router.get("/user/{user_id}/posts")
 async def get_users_posts(request: Request, user_id: int):
     """display specific user's recent posts with 3 replies each"""
     # get posts
@@ -64,6 +64,37 @@ async def get_users_posts(request: Request, user_id: int):
             "posts": posts,
             "title": f"{posts[0].get('username')}'s Posts",
             "user_info": user_info,
+        },
+    )
+
+
+@router.get("/user/{user_id}")
+async def get_user_page(request: Request, user_id: int):
+    # get user info
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.get(f"/user/{user_id}")
+
+    user_info = resp.json()
+
+    # get followers
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.get(f"/user/{user_id}/followers")
+
+    followers = resp.json()
+
+    # get following
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.get(f"/user/{user_id}/following")
+
+    following = resp.json()
+
+    return templates.TemplateResponse(
+        "user/profile.html",
+        {
+            "request": request,
+            "user_info": user_info,
+            "followers": followers,
+            "following": following,
         },
     )
 
@@ -181,24 +212,7 @@ async def get_user_account(request: Request, token: str = Depends(verify_logged_
     """User account page - Display user info and relevant links. Also displays list of followers and following users"""
     user_info = await get_user_info(request)
 
-    # get followers
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
-        resp = await ac.get(f"/user/{user_info.get('id')}/followers")
-
-    followers = resp.json()
-
-    # get following
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
-        resp = await ac.get(f"/user/{user_info.get('id')}/following")
-
-    following = resp.json()
-
     return templates.TemplateResponse(
         "user/account.html",
-        {
-            "request": request,
-            "user_info": user_info,
-            "followers": followers,
-            "following": following,
-        },
+        {"request": request, "user_info": user_info},
     )
