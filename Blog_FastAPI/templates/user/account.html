@@ -11,38 +11,4 @@
         <span>To log out click <a href="{{ url_for('get_logout') }}">here.</a></span>
     </div>
 
-    <div>
-        <div class="row mx-auto text-center">
-            <div class="col bg-info">
-                <h5>Following - {{ followers|length }}</h5>
-                {% if followers|length < 1  %}
-                    <p>You are not currently following anybody</p>
-                {% else %}
-                    <div>
-                        <ul>
-                        {% for follower in followers %}
-                            <li>{{ follower.username }} - <a href="{{ url_for('get_users_posts', user_id=follower.id) }}"> View Posts</a></li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="col bg-warning">
-                <h5>Following You - {{ following|length }}</h5>
-                {% if following|length < 1  %}
-                    <p>Nobody is currently following you</p>
-                {% else %}
-                    <div>
-                        <ul>
-                        {% for follower in following %}
-                            <li>{{ follower.username }} - <a href="{{ url_for('get_users_posts', user_id=follower.id) }}"> View Posts</a></li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-            </div>
-
-        </div>
-    </div>
 {% endblock %}
