@@ -11,7 +11,12 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
 async def home(request: Request):
-    """home page - display 10 most recent posts with 3 replies each"""
+    return templates.TemplateResponse("base.html", {"request": request})
+
+
+@router.get("/recent")
+async def get_recent_activity(request: Request):
+    """Display 10 most recent posts with 3 replies each"""
     # get posts
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get("/posts/recent?skip=0&limit=10")
@@ -31,7 +36,12 @@ async def home(request: Request):
 
     return templates.TemplateResponse(
         "post/show_posts.html",
-        {"request": request, "posts": posts, "title": "Home", "user_info": user_info},
+        {
+            "request": request,
+            "posts": posts,
+            "title": "Recent Activity",
+            "user_info": user_info,
+        },
     )
 
 
@@ -256,6 +266,8 @@ async def get_unfollow_user(user_id: int, token: str = Depends(verify_logged_in)
     return response
 
 
+# noinspection PyUnusedLocal
+# token not used by dependency - confirms login
 @router.get("/profile")
 async def get_profile(request: Request, token: str = Depends(verify_logged_in)):
     user_info = await get_user_info(request)
