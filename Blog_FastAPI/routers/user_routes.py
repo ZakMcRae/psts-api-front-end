@@ -76,17 +76,17 @@ async def get_user_page(request: Request, user_id: int):
 
     user_info = resp.json()
 
-    # get followers
+    # get list of users the page owner is following
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(f"/user/{user_id}/followers")
 
-    followers = resp.json()
+    following = resp.json()
 
-    # get following
+    # get list of users following page owner
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
         resp = await ac.get(f"/user/{user_id}/following")
 
-    following = resp.json()
+    followers = resp.json()
 
     return templates.TemplateResponse(
         "user/profile.html",
@@ -216,3 +216,49 @@ async def get_user_account(request: Request, token: str = Depends(verify_logged_
         "user/account.html",
         {"request": request, "user_info": user_info},
     )
+
+
+@router.get("/user/{user_id}/follow")
+async def get_follow_user(user_id: int, token: str = Depends(verify_logged_in)):
+    # send info to backend API - follow user endpoint
+    header = {"Authorization": f"Bearer {token}"}
+
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.post(f"/user/follow/{user_id}", headers=header)
+
+    # catch if user already followed
+    if resp.status_code == 409:
+        response = RedirectResponse(url=f"/user/{user_id}")
+        response.set_cookie("alert", "User already followed", max_age=1)
+        return response
+
+    response = RedirectResponse(url=f"/user/{user_id}")
+    response.set_cookie("alert", "Now Following", max_age=1)
+    return response
+
+
+@router.get("/user/{user_id}/unfollow")
+async def get_unfollow_user(user_id: int, token: str = Depends(verify_logged_in)):
+    # send info to backend API - unfollow user endpoint
+    header = {"Authorization": f"Bearer {token}"}
+
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.delete(f"/user/follow/{user_id}", headers=header)
+
+    # catch if user already not followed
+    if resp.status_code == 404:
+        response = RedirectResponse(url=f"/user/{user_id}")
+        response.set_cookie("alert", "User was not being followed", max_age=1)
+        return response
+
+    response = RedirectResponse(url=f"/user/{user_id}")
+    response.set_cookie("alert", "Now Following", max_age=1)
+    return response
+
+
+@router.get("/profile")
+async def get_profile(request: Request, token: str = Depends(verify_logged_in)):
+    user_info = await get_user_info(request)
+
+    response = RedirectResponse(url=f"/user/{user_info.get('id')}", status_code=303)
+    return response
