@@ -6,3 +6,12 @@
 .title-link:hover {
     color: gray;
 }
+
+.username-link {
+    color: black;
+    text-decoration: none;
+}
+
+.username-link:hover {
+    color: gray;
+}
