@@ -8,7 +8,7 @@
 
             {% for post in posts %}
                 <div class="ms-1 mb-2 p-2 bg-warning">
-                    <h3><a href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a></h3>
+                    <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a></h3>
                     <p>{{ post.body }}</p>
                     <p class="text-muted mb-0">Posted by: {{ post.username }}</p>
                     <p class="text-muted mb-0">Date Created: {{ post.date_created[0:10] }}</p>
