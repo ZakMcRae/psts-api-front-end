@@ -3,46 +3,54 @@
 {% block content %}
     <div>
         {% if title %}
-            <h1 class="text-center">{{ title }}</h1>
+            <h1 class="text-center bg-secondary p-2">{{ title }}</h1>
         {% endif %}
+    </div>
 
-            {% for post in posts %}
-                <div class="ms-1 mb-2 p-2 bg-warning">
-                    <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a></h3>
-                    <p>{{ post.body }}</p>
-                    <p class="text-muted mb-0">Posted by: {{ post.username }}</p>
-                    <p class="text-muted mb-0">Date Created: {{ post.date_created[0:10] }}</p>
+    {% for post in posts %}
+        <div class="ms-1 mb-2 p-2 bg-warning">
+            <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a></h3>
+            <p>{{ post.body }}</p>
 
-                    {% if post.date_modified != None %}
-                        <p class="text-muted">Date Modified: {{ post.date_modified[0:10] }}</p>
-                    {% endif %}
+{#            todo push section to the right#}
 
-                    {% if user_info['id'] == post.user_id %}
+            <div>
+                <p class="text-muted mb-0">Posted by: <a class="username-link"
+                                                         href="{{ url_for('get_user_page', user_id=post.user_id) }}">{{ post.username }}</a>
+                </p>
+                <p class="text-muted mb-0">Date Created: {{ post.date_created[0:10] }}</p>
+
+                {% if post.date_modified != None %}
+                    <p class="text-muted">Date Modified: {{ post.date_modified[0:10] }}</p>
+                {% endif %}
+
+                {% if user_info['id'] == post.user_id %}
                     <a class="mx-2" href="{{ url_for('get_update_post', post_id=post.id) }}">Edit</a>
                     <a href="{{ url_for('get_delete_post', post_id=post.id) }}">Delete</a>
+                {% endif %}
+            </div>
+
+            {% for reply in post.replies %}
+                <div class="mb-1 ms-4 bg-info p-2">
+                    <h5>{{ reply.body }}</h5>
+                    <p class="text-muted mb-0">Posted by: <a class="username-link"
+                                                             href="{{ url_for('get_user_page', user_id=reply.user_id) }}">{{ reply.username }}</a>
+                    </p>
+                    <p class="text-muted mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
+
+                    {% if reply.date_modified != None %}
+                        <p class="text-muted mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
                     {% endif %}
 
-                    {% for reply in post.replies %}
-                        <div class="mb-1 ms-4 bg-info p-2">
-                            <h5>{{ reply.body }}</h5>
-                            <p class="text-muted mb-0">Posted by: {{ reply.username }}</p>
-                            <p class="text-muted mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
-
-                        {% if reply.date_modified != None %}
-                            <p class="text-muted mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
-                        {% endif %}
-
-                        {% if user_info['id'] == reply.user_id %}
+                    {% if user_info['id'] == reply.user_id %}
                         <a class="mx-2" href="{{ url_for('get_update_reply', reply_id=reply.id) }}">Edit</a>
                         <a href="{{ url_for('get_delete_reply', reply_id=reply.id) }}">Delete</a>
-                        {% endif %}
+                    {% endif %}
 
-
-
-                        </div>
-                    {% endfor %}
 
                 </div>
             {% endfor %}
-    </div>
+
+        </div>
+    {% endfor %}
 {% endblock %}
