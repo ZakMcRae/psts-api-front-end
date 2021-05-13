@@ -3,15 +3,19 @@
 {% block content %}
 
     <div>
-        <h1 class="text-center">{{ user_info.get('username') }}'s Page</h1>
+        <h1 class="text-center">{{ user_info.get('username') }}'s Profile</h1>
     </div>
-
+    <div class="text-center mb-2">
+        <a class="btn btn-primary" href="{{ url_for('get_follow_user', user_id=user_info.get('id')) }}">Follow User</a>
+        <a class="btn btn-primary" href="{{ url_for('get_unfollow_user', user_id=user_info.get('id')) }}">Unfollow User</a>
+    </div>
+    
     <div>
         <div class="row mx-auto text-center">
             <div class="col bg-info">
                 <h5>Following - {{ followers|length }}</h5>
                 {% if followers|length < 1  %}
-                    <p>You are not currently following anybody</p>
+                    <p>{{ user_info.get('username') }} is not currently following anybody</p>
                 {% else %}
                     <div>
                         <ul>
@@ -24,9 +28,9 @@
             </div>
 
             <div class="col bg-warning">
-                <h5>Following You - {{ following|length }}</h5>
+                <h5>Following {{ user_info.get('username') }} - {{ following|length }}</h5>
                 {% if following|length < 1  %}
-                    <p>Nobody is currently following you</p>
+                    <p>Nobody is currently following {{ user_info.get('username') }}</p>
                 {% else %}
                     <div>
                         <ul>
