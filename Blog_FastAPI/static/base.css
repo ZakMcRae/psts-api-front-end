@@ -4,7 +4,7 @@
 }
 
 .title-link:hover {
-    color: gray;
+    color: #333389;
 }
 
 .username-link {
@@ -13,7 +13,7 @@
 }
 
 .username-link:hover {
-    color: gray;
+    color: #333389;
 }
 
 .info-box {
@@ -22,4 +22,24 @@
 
 .post-block {
     max-width: 1000px;
+}
+
+.bg-main {
+    background: #607D8B;
+}
+
+.bg-minor {
+    background: #90A4AE;
+}
+
+.bg-background {
+    background: #455A64;
+}
+
+.navbar a {
+    color: black;
+}
+
+.navbar a:hover {
+    color: #333389;
 }
