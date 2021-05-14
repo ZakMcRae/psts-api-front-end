@@ -3,12 +3,12 @@
 {% block content %}
     <div>
         {% if title %}
-            <h1 class="text-center bg-secondary p-2">{{ title }}</h1>
+            <h1 class="text-center text-light p-2">{{ title }}</h1>
         {% endif %}
     </div>
 
     {% for post in posts %}
-        <div class="mb-2 mx-auto py-2 ps-2 bg-warning rounded text-center post-block">
+        <div class="mb-2 mx-auto py-2 ps-2 bg-main rounded text-center post-block">
 
 
             <div>
@@ -32,7 +32,7 @@
 
 
             <div class="d-flex flex-grow-1 justify-content-end">
-                <div class="text-muted pe-2 info-box">
+                <div class="pe-2 info-box">
                     <p class="mb-0">Posted by: <a class="username-link"
                                                   href="{{ url_for('get_user_page', user_id=post.user_id) }}">{{ post.username }}</a>
                     </p>
@@ -46,7 +46,7 @@
             </div>
 
             {% for reply in post.replies %}
-                <div class="mb-1 ms-4 bg-info pt-2 ps-2 rounded-start">
+                <div class="mb-1 ms-4 bg-minor pt-2 ps-2 rounded-start">
 
                     <div>
                 {% if user_info['id'] == reply.user_id %}
@@ -65,15 +65,15 @@
 
                     <p>{{ reply.body }}</p>
 
-                    <div class="d-flex flex-grow-1 justify-content-end mb-2">
-                        <div class="text-muted pe-2 info-box">
-                            <p class="text-muted mb-0">Posted by: <a class="username-link"
+                    <div class="d-flex flex-grow-1 justify-content-end">
+                        <div class="pe-2 info-box">
+                            <p class="mb-0">Posted by: <a class="username-link"
                                                                      href="{{ url_for('get_user_page', user_id=reply.user_id) }}">{{ reply.username }}</a>
                             </p>
-                            <p class="text-muted mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
+                            <p class="mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
 
                             {% if reply.date_modified != None %}
-                                <p class="text-muted mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
+                                <p class="mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
                             {% endif %}
 
                         </div>
