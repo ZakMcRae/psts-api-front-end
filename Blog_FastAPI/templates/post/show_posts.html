@@ -8,44 +8,77 @@
     </div>
 
     {% for post in posts %}
-        <div class="ms-1 mb-2 p-2 bg-warning">
-            <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a></h3>
-            <p>{{ post.body }}</p>
+        <div class="mb-2 mx-auto py-2 ps-2 bg-warning rounded text-center post-block">
 
-{#            todo push section to the right#}
 
             <div>
-                <p class="text-muted mb-0">Posted by: <a class="username-link"
-                                                         href="{{ url_for('get_user_page', user_id=post.user_id) }}">{{ post.username }}</a>
-                </p>
-                <p class="text-muted mb-0">Date Created: {{ post.date_created[0:10] }}</p>
-
-                {% if post.date_modified != None %}
-                    <p class="text-muted">Date Modified: {{ post.date_modified[0:10] }}</p>
-                {% endif %}
-
                 {% if user_info['id'] == post.user_id %}
-                    <a class="mx-2" href="{{ url_for('get_update_post', post_id=post.id) }}">Edit</a>
-                    <a href="{{ url_for('get_delete_post', post_id=post.id) }}">Delete</a>
+                    <div class="dropdown float-end">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item"
+                                   href="{{ url_for('get_update_post', post_id=post.id) }}">Edit</a></li>
+                            <li><a class="dropdown-item"
+                                   href="{{ url_for('get_delete_post', post_id=post.id) }}">Delete</a></li>
+                        </ul>
+                    </div>
                 {% endif %}
+                <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a></h3>
+                <p>{{ post.body }}</p>
+
+
+            </div>
+
+
+            <div class="d-flex flex-grow-1 justify-content-end">
+                <div class="text-muted pe-2 info-box">
+                    <p class="mb-0">Posted by: <a class="username-link"
+                                                  href="{{ url_for('get_user_page', user_id=post.user_id) }}">{{ post.username }}</a>
+                    </p>
+                    <p class="mb-0">Date Created: {{ post.date_created[0:10] }}</p>
+
+                    {% if post.date_modified != None %}
+                        <p class="mb-0">Date Modified: {{ post.date_modified[0:10] }}</p>
+                    {% endif %}
+
+                </div>
             </div>
 
             {% for reply in post.replies %}
-                <div class="mb-1 ms-4 bg-info p-2">
-                    <h5>{{ reply.body }}</h5>
-                    <p class="text-muted mb-0">Posted by: <a class="username-link"
-                                                             href="{{ url_for('get_user_page', user_id=reply.user_id) }}">{{ reply.username }}</a>
-                    </p>
-                    <p class="text-muted mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
+                <div class="mb-1 ms-4 bg-info pt-2 ps-2 rounded-start">
 
-                    {% if reply.date_modified != None %}
-                        <p class="text-muted mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
-                    {% endif %}
+                    <div>
+                {% if user_info['id'] == reply.user_id %}
+                    <div class="dropdown float-end">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item"
+                                   href="{{ url_for('get_update_reply', reply_id=reply.id) }}">Edit</a></li>
+                            <li><a class="dropdown-item"
+                                   href="{{ url_for('get_delete_reply', reply_id=reply.id) }}">Delete</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
 
-                    {% if user_info['id'] == reply.user_id %}
-                        <a class="mx-2" href="{{ url_for('get_update_reply', reply_id=reply.id) }}">Edit</a>
-                        <a href="{{ url_for('get_delete_reply', reply_id=reply.id) }}">Delete</a>
-                    {% endif %}
+
+                    <p>{{ reply.body }}</p>
+
+                    <div class="d-flex flex-grow-1 justify-content-end mb-2">
+                        <div class="text-muted pe-2 info-box">
+                            <p class="text-muted mb-0">Posted by: <a class="username-link"
+                                                                     href="{{ url_for('get_user_page', user_id=reply.user_id) }}">{{ reply.username }}</a>
+                            </p>
+                            <p class="text-muted mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
+
+                            {% if reply.date_modified != None %}
+                                <p class="text-muted mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    </div>
 
 
                 </div>
