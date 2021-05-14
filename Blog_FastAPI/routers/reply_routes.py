@@ -58,6 +58,27 @@ async def reply_new_reply(
 @router.get("/reply/{reply_id}/delete")
 async def get_delete_reply(reply_id: int, token: str = Depends(verify_logged_in)):
     """Delete Reply - pass data to backend api and handle any errors"""
+    # get reply info for later redirect
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.get(f"/reply/{reply_id}")
+
+    # catch unexpected error
+    if resp.status_code == 200:
+        reply_info = resp.json()
+
+    elif resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reply does not exist",
+        )
+
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Something went wrong",
+        )
+
+    # send reply info to backend api
     header = {"Authorization": f"Bearer {token}"}
 
     async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
@@ -70,8 +91,10 @@ async def get_delete_reply(reply_id: int, token: str = Depends(verify_logged_in)
             detail="This reply belongs to another user",
         )
 
-    # success - redirect home and alert user
-    response = RedirectResponse(url="/", status_code=303)
+    # success - redirect back to post and alert user of deleted reply
+    response = RedirectResponse(
+        url=f"/post/{reply_info.get('post_id')}", status_code=303
+    )
     response.set_cookie("alert", "Reply Deleted", max_age=1)
     return response
 
