@@ -43,3 +43,7 @@
 .navbar a:hover {
     color: #333389;
 }
+
+.main-block {
+    max-width: 1000px;
+}
