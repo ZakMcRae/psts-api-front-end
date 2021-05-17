@@ -1,41 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="mb-2">
-        <h1 class="text-center">Create New Post</h1>
-    </div>
+    <div class="bg-main rounded main-block mx-auto my-1 p-2">
+        <div>
+            <h1 class="text-center">Create New Post</h1>
+        </div>
 
-    <div class="p-2 col-8 mx-auto">
-        <form class="form-group" action="" method="post">
+        <div class="bg-minor rounded py-2">
+            <div class="col-10 mx-auto">
+                <form class="form-group" action="" method="post">
 
-            <label class="form-label" for="title">Title</label>
-            {% if form_data %}
-                <input class="form-control mb-2" type="text" id="title" name="title"
-                       value="{{ form_data.get('title') }}">
-                {% if form_data.get('title_error') %}
-                    <div>
-                        <p class="text-danger">{{ form_data.get('title_error') }}</p>
+                    <label class="form-label" for="title">Title</label>
+                    {% if form_data %}
+                        <input class="form-control mb-2" type="text" id="title" name="title"
+                               value="{{ form_data.get('title') }}">
+                        {% if form_data.get('title_error') %}
+                            <div>
+                                <p class="text-danger">{{ form_data.get('title_error') }}</p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <input class="form-control mb-2" type="text" id="title" name="title">
+                    {% endif %}
+
+                    <label class="form-label" for="body">Body</label>
+                    {% if form_data %}
+                        <textarea class="form-control mb-2" type="text" id="body" name="body"
+                                  rows="6">{{ form_data.get('body') }}</textarea>
+                        {% if form_data.get('body_error') %}
+                            <div>
+                                <p class="text-danger">{{ form_data.get('body_error') }}</p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <textarea class="form-control mb-2" type="text" id="body" name="body"
+                                  rows="6"></textarea>
+                    {% endif %}
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-secondary">Create Post</button>
                     </div>
-                {% endif %}
-            {% else %}
-                <input class="form-control mb-2" type="text" id="title" name="title">
-            {% endif %}
-
-            <label class="form-label" for="body">Body</label>
-            {% if form_data %}
-                <textarea class="form-control mb-2" type="text" id="body" name="body">{{ form_data.get('body') }}</textarea>
-                {% if form_data.get('body_error') %}
-                    <div>
-                        <p class="text-danger">{{ form_data.get('body_error') }}</p>
-                    </div>
-                {% endif %}
-            {% else %}
-                <textarea class="form-control form-control-lg mb-2" type="text" id="body" name="body"></textarea>
-            {% endif %}
-
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Create Post</button>
+                </form>
             </div>
-        </form>
+        </div>
+
     </div>
 {% endblock %}

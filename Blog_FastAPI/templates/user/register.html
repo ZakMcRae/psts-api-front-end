@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="mb-2">
-        <h1 class="text-center">Register</h1>
-    </div>
+    <div class="bg-main rounded main-block mx-auto my-1 p-2">
+        <div class="mb-2">
+            <h1 class="text-center">Register</h1>
+        </div>
 
-    <div class="p-2 col-8 mx-auto">
+        <div class="bg-minor rounded py-2">
+            <div class="col-10 mx-auto">
         <form class="form-group" action="" method="post">
 
             <label class="form-label" for="username">Username</label>
@@ -39,9 +41,13 @@
             <input class="form-control mb-2" type="password" id="confirm_password" name="confirm_password">
 
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Submit</button>
             </div>
         </form>
+    </div>
+        </div>
+
+
     </div>
 
     <!-- Client Side Validation for equal passwords and username length  -->

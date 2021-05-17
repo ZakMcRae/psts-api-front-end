@@ -1,29 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="mb-2">
-        <h1 class="text-center">Update Reply</h1>
-    </div>
+    <div class="bg-main rounded main-block mx-auto my-1 p-2">
+        <div>
+            <h1 class="text-center">Update Reply</h1>
+        </div>
 
-    <div class="p-2 col-8 mx-auto">
-        <form class="form-group" action="" method="post">
+        <div class="bg-minor rounded py-2">
+            <div class="col-10 mx-auto">
+                <form class="form-group" action="" method="post">
 
-            <label class="form-label" for="body">Body</label>
-            {% if form_data %}
-                <textarea class="form-control mb-2" type="text" id="body" name="body" rows=4>{{ form_data.get('body') }}</textarea>
-                {% if form_data.get('body_error') %}
-                    <div>
-                        <p class="text-danger">{{ form_data.get('body_error') }}</p>
+                    <label class="form-label" for="body">Body</label>
+                    {% if form_data %}
+                        <textarea class="form-control mb-2" type="text" id="body" name="body"
+                                  rows="6">{{ form_data.get('body') }}</textarea>
+                        {% if form_data.get('body_error') %}
+                            <div>
+                                <p class="text-danger">{{ form_data.get('body_error') }}</p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <textarea class="form-control mb-2" type="text" id="body"
+                                  name="body" rows="6"></textarea>
+                    {% endif %}
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-secondary">Update Reply</button>
                     </div>
-                {% endif %}
-            {% else %}
-                <textarea class="form-control form-control-lg mb-2" type="text" id="body" name="body"></textarea>
-            {% endif %}
-
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Update Reply</button>
+                </form>
             </div>
-        </form>
+        </div>
+
     </div>
 
 {% endblock %}
