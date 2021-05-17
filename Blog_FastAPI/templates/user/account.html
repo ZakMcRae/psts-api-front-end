@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="text-center bg-info pb-1">
-        <h1>Account Page</h1>
-        <p class="mb-0">Username: {{ user_info.get('username') }}</p>
-        <p class="mb-0">Email: {{ user_info.get('email') }}</p>
-    </div>
+    <div class="bg-main rounded main-block mx-auto my-1 p-2">
+        <div>
+            <h1 class="text-center">Account Page</h1>
+        </div>
 
-    <div class="text-center py-2 bg-success">
-        <span>To log out click <a href="{{ url_for('get_logout') }}">here.</a></span>
+        <div class="bg-minor rounded py-2 text-center">
+            <p class="mb-0">Username: {{ user_info.get('username') }}</p>
+            <p class="mb-0">Email: {{ user_info.get('email') }}</p>
+            <span>To log out click <a href="{{ url_for('get_logout') }}">here.</a></span>
+        </div>
     </div>
 
 {% endblock %}
