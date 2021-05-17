@@ -11,8 +11,14 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
 async def home(request: Request):
+    # if logged in redirect to recent activity
+    if request.cookies.get("jlt"):
+        response = RedirectResponse(url=f"/recent", status_code=303)
+        return response
+
+    # if not logged in return landing page
     return templates.TemplateResponse(
-        "base.html", {"request": request, "title": "Home"}
+        "landing.html", {"request": request, "title": "Home"}
     )
 
 
