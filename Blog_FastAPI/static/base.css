@@ -25,15 +25,15 @@
 }
 
 .bg-main {
-    background: #607D8B;
+    background: #2d6076;
 }
 
 .bg-minor {
-    background: #90A4AE;
+    background: #aeb8bb;
 }
 
 .bg-background {
-    background: #455A64;
+    background: #aeb8bb;
 }
 
 .navbar a {
@@ -51,4 +51,13 @@
 /* Modal adding unwanted padding when opened - this negates that */
 .modal-open {
     padding-right: 0 !important;
+}
+
+.logout-link {
+    color: black;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    color: #333389;
 }
