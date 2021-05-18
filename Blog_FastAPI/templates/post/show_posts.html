@@ -1,89 +1,155 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
-        {% if title %}
-            <h1 class="text-center p-2">{{ title }}</h1>
-        {% endif %}
+
+    <!-- Modal - Modified by javascript at bottom of page -->
+    <div class="modal fade" id="confdeleteModal" tabindex="-1" aria-labelledby="confdeleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confdeleteModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div>
+                    <p class="modal-body"></p>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-danger modal-link" href="#">Delete</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {% for post in posts %}
-        <div class="mb-2 mx-auto py-2 ps-2 bg-main rounded text-center post-block">
 
 
-            <div>
-                {% if user_info['id'] == post.user_id %}
-                    <div class="dropdown float-end">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown" aria-expanded="false"></button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item"
-                                   href="{{ url_for('get_update_post', post_id=post.id) }}">Edit</a></li>
-                            <li><a class="dropdown-item"
-                                   href="{{ url_for('get_delete_post', post_id=post.id) }}">Delete</a></li>
-                        </ul>
-                    </div>
-                {% endif %}
-                <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a></h3>
-                <p>{{ post.body }}</p>
+    <div>
+        <div>
+            {% if title %}
+                <h1 class="text-center p-2">{{ title }}</h1>
+            {% endif %}
+        </div>
+
+        {% for post in posts %}
+            <div class="mb-2 mx-auto py-2 ps-2 bg-main rounded text-center post-block">
 
 
-            </div>
-
-
-            <div class="d-flex flex-grow-1 justify-content-end">
-                <div class="pe-2 info-box">
-                    <p class="mb-0">Posted by: <a class="username-link"
-                                                  href="{{ url_for('get_user_page', user_id=post.user_id) }}">{{ post.username }}</a>
-                    </p>
-                    <p class="mb-0">Date Created: {{ post.date_created[0:10] }}</p>
-
-                    {% if post.date_modified != None %}
-                        <p class="mb-0">Date Modified: {{ post.date_modified[0:10] }}</p>
+                <div>
+                    {% if user_info['id'] == post.user_id %}
+                        <div class="dropdown float-end">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1"
+                                    data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item"
+                                       href="{{ url_for('get_update_post', post_id=post.id) }}">Edit</a></li>
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-type="Post" data-bs-id="{{ post.id }}"
+                                       href="#confdeleteModal">Delete</a></li>
+                            </ul>
+                        </div>
                     {% endif %}
+                    <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a>
+                    </h3>
+                    <p>{{ post.body }}</p>
+
 
                 </div>
-            </div>
 
-            {% for reply in post.replies %}
-                <div class="mb-1 ms-4 bg-minor pt-2 ps-2 rounded-start">
 
-                    <div>
-                {% if user_info['id'] == reply.user_id %}
-                    <div class="dropdown float-end">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown" aria-expanded="false"></button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item"
-                                   href="{{ url_for('get_update_reply', reply_id=reply.id) }}">Edit</a></li>
-                            <li><a class="dropdown-item"
-                                   href="{{ url_for('get_delete_reply', reply_id=reply.id) }}">Delete</a></li>
-                        </ul>
+                <div class="d-flex flex-grow-1 justify-content-end">
+                    <div class="pe-2 info-box">
+                        <p class="mb-0">Posted by: <a class="username-link"
+                                                      href="{{ url_for('get_user_page', user_id=post.user_id) }}">{{ post.username }}</a>
+                        </p>
+                        <p class="mb-0">Date Created: {{ post.date_created[0:10] }}</p>
+
+                        {% if post.date_modified != None %}
+                            <p class="mb-0">Date Modified: {{ post.date_modified[0:10] }}</p>
+                        {% endif %}
+
                     </div>
-                {% endif %}
+                </div>
 
+                {% for reply in post.replies %}
+                    <div class="mb-1 ms-4 bg-minor pt-2 ps-2 rounded-start">
 
-                    <p>{{ reply.body }}</p>
-
-                    <div class="d-flex flex-grow-1 justify-content-end">
-                        <div class="pe-2 info-box">
-                            <p class="mb-0">Posted by: <a class="username-link"
-                                                                     href="{{ url_for('get_user_page', user_id=reply.user_id) }}">{{ reply.username }}</a>
-                            </p>
-                            <p class="mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
-
-                            {% if reply.date_modified != None %}
-                                <p class="mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
+                        <div>
+                            {% if user_info['id'] == reply.user_id %}
+                                <div class="dropdown float-end">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton1"
+                                            data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item"
+                                               href="{{ url_for('get_update_reply', reply_id=reply.id) }}">Edit</a></li>
+                                        <li>
+                                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-type="Reply" data-bs-id="{{ reply.id }}" href="#confdeleteModal">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             {% endif %}
 
+
+                            <p>{{ reply.body }}</p>
+
+                            <div class="d-flex flex-grow-1 justify-content-end">
+                                <div class="pe-2 info-box">
+                                    <p class="mb-0">Posted by: <a class="username-link"
+                                                                  href="{{ url_for('get_user_page', user_id=reply.user_id) }}">{{ reply.username }}</a>
+                                    </p>
+                                    <p class="mb-0">Date Created: {{ reply.date_created[0:10] }}</p>
+
+                                    {% if reply.date_modified != None %}
+                                        <p class="mb-0">Date Modified: {{ reply.date_modified[0:10] }}</p>
+                                    {% endif %}
+
+                                </div>
+                            </div>
                         </div>
+
+
                     </div>
-                    </div>
+                {% endfor %}
+
+            </div>
+            </div>
 
 
-                </div>
-            {% endfor %}
+        {% endfor %}
 
-        </div>
-    {% endfor %}
+<script>
+    let confdeleteModal = document.getElementById('confdeleteModal')
+    confdeleteModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        let button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        let type = button.getAttribute('data-bs-type')
+        let id = button.getAttribute('data-bs-id')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        let modalTitle = confdeleteModal.querySelector('.modal-title')
+        let modalBody = confdeleteModal.querySelector('.modal-body')
+        let modalLink = confdeleteModal.querySelector('.modal-link')
+
+        // Post specific modal for delete confirmation
+        if (type === 'Post') {
+            modalTitle.textContent = 'Delete ' + type
+            modalBody.textContent = 'This will delete this post and all replies to it. This cannot be undone.'
+            modalLink.href = `http://127.0.0.1:8080/post/${id}/delete`
+        }
+
+        // Reply specific modal for delete confirmation
+        if (type === 'Reply') {
+            modalTitle.textContent = 'Delete ' + type
+            modalBody.textContent = 'This will delete the reply. This cannot be undone.'
+            modalLink.href = `http://127.0.0.1:8080/reply/${id}/delete`
+        }
+
+    })
+</script>
+
+
 {% endblock %}
