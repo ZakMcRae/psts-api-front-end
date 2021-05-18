@@ -20,6 +20,9 @@ async def http_exception_handler(request: Request, exception: StarletteHTTPExcep
 
 exception_handlers = {StarletteHTTPException: http_exception_handler}
 
+# todo modals on delete of post or reply for confirmation
+# todo play with alert colour
+
 # todo turn off docs urls after dev work finished - uncomment below
 app = fastapi.FastAPI(
     exception_handlers=exception_handlers
