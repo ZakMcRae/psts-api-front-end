@@ -29,7 +29,20 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav me-auto">
-                <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+                {% if request.cookies.get('jlt') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            View Posts
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" href="{{ url_for('get_my_posts') }}">My Posts</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('get_followed_users_posts') }}">Followed User's Posts</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('get_recent_activity') }}">Everybody's Posts</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <a class="nav-link active" href="{{ url_for('get_recent_activity') }}">View Posts</a>
+                {% endif %}
             </div>
 
             <div class="navbar-nav">
@@ -50,7 +63,7 @@
 
 {% if request.cookies.get('alert') %}
     <div id="hideDiv" class="position-absolute top-0 start-50 translate-middle-x">
-        <div class="text-center text-nowrap bg-white p-2 mt-2 rounded border border-white">
+        <div class="text-center text-nowrap bg-minor p-2 mt-2 rounded border border-dark">
             <span>{{ request.cookies.get('alert') }}</span>
         </div>
     </div>
