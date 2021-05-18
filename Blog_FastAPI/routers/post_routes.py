@@ -183,7 +183,6 @@ async def get_post(request: Request, post_id: int):
         {
             "request": request,
             "posts": posts,
-            "title": f"{posts[0].get('title')}",
             "user_info": user_info,
         },
     )
