@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="bg-main rounded main-block mx-auto mt-1 mb-2">
+    <div class="bg-main rounded main-block mx-auto mt-1 mb-2 pb-5 border border-dark">
         <div>
             <h1 class="text-center">{{ user_info.get('username') }}'s Profile</h1>
         </div>
 
         <div class="text-center mb-2">
-            <a class="btn btn-secondary btn-outline-light"
+            <a class="btn btn-secondary btn-outline-dark"
                href="{{ url_for('get_users_posts', user_id=user_info.get('id')) }}">View Posts</a>
-            <a class="btn btn-secondary btn-outline-light"
+            <a class="btn btn-secondary btn-outline-dark"
                href="{{ url_for('get_follow_user', user_id=user_info.get('id')) }}">Follow
                 User</a>
-            <a class="btn btn-secondary btn-outline-light"
+            <a class="btn btn-secondary btn-outline-dark"
                href="{{ url_for('get_unfollow_user', user_id=user_info.get('id')) }}">Unfollow
                 User</a>
         </div>
 
-        <div class="bg-minor rounded-bottom py-2">
+        <div class="bg-minor py-2">
             <div class="row mx-auto text-center">
 
                 <div class="col border-end border-secondary">

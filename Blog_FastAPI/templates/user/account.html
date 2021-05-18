@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="bg-main rounded main-block mx-auto my-1 p-2">
+    <div class="bg-main rounded main-block mx-auto my-1 p-2 border border-dark">
         <div>
             <h1 class="text-center">Account Page</h1>
         </div>
@@ -9,7 +9,7 @@
         <div class="bg-minor rounded py-2 text-center">
             <p class="mb-0">Username: {{ user_info.get('username') }}</p>
             <p class="mb-0">Email: {{ user_info.get('email') }}</p>
-            <span>To log out click <a href="{{ url_for('get_logout') }}">here.</a></span>
+            <span>To log out click <a class="logout-link" href="{{ url_for('get_logout') }}">here.</a></span>
         </div>
     </div>
 
