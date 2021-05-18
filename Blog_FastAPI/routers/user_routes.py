@@ -48,9 +48,22 @@ async def get_recent_activity(request: Request):
             "request": request,
             "posts": posts,
             "title": "Recent Activity",
+            "subtitle": "See what everybody has been up to",
             "user_info": user_info,
         },
     )
+
+
+# noinspection PyUnusedLocal
+# token not used by dependency - confirms login
+@router.get("/user/me/posts")
+async def get_my_posts(request: Request, token: str = Depends(verify_logged_in)):
+    user_info = await get_user_info(request)
+
+    response = RedirectResponse(
+        url=f"/user/{user_info.get('id')}/posts", status_code=303
+    )
+    return response
 
 
 @router.get("/user/{user_id}/posts")
@@ -81,6 +94,7 @@ async def get_users_posts(request: Request, user_id: int):
             "request": request,
             "posts": posts,
             "title": f"{posts[0].get('username')}'s Posts",
+            "subtitle": "Here's what I've been up to",
             "user_info": user_info,
         },
     )
@@ -282,3 +296,49 @@ async def get_profile(request: Request, token: str = Depends(verify_logged_in)):
 
     response = RedirectResponse(url=f"/user/{user_info.get('id')}", status_code=303)
     return response
+
+
+# noinspection PyUnusedLocal
+# token not used by dependency - confirms login
+@router.get("/following/posts")
+async def get_followed_users_posts(
+    request: Request, token: str = Depends(verify_logged_in)
+):
+    user_info = await get_user_info(request)
+
+    # get list of users the page owner is following
+    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        resp = await ac.get(f"/user/{user_info.get('id')}/followers")
+
+    following = resp.json()
+
+    posts = []
+
+    for user in following:
+        async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+            resp = await ac.get(
+                f"/user/{user.get('id')}/posts?skip=0&limit=3&sort-newest-first=true"
+            )
+
+        posts += resp.json()
+
+    posts = sorted(posts, key=lambda item: item["date_created"], reverse=True)
+
+    # add 3 replies per post
+    for post in posts:
+        async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+            resp = await ac.get(
+                f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
+            )
+        post["replies"] = resp.json()
+
+    return templates.TemplateResponse(
+        "post/show_posts.html",
+        {
+            "request": request,
+            "posts": posts,
+            "title": "Followed User's Posts",
+            "subtitle": "See what your friends have been up to",
+            "user_info": user_info,
+        },
+    )
