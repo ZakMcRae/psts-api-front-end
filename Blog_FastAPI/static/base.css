@@ -47,3 +47,8 @@
 .main-block {
     max-width: 1000px;
 }
+
+/* Modal adding unwanted padding when opened - this negates that */
+.modal-open {
+    padding-right: 0 !important;
+}
