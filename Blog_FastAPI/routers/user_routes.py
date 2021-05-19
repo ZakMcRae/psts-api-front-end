@@ -202,7 +202,7 @@ async def post_login(request: Request):
         resp = await ac.post("/token", data=body)
 
     # check for incorrect username or password
-    if resp.status_code == 401:
+    if resp.status_code == 401 or resp.status_code == 422:
         form_data["username_error"] = "Invalid Username or Password"
 
         # send back validation errors and form data
