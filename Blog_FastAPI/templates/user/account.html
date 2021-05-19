@@ -8,7 +8,7 @@
 
         <div class="bg-minor rounded py-2 text-center">
             <p class="mb-0">Username: {{ user_info.get('username') }}</p>
-            <p class="mb-0">Email: {{ user_info.get('email') }}</p>
+            <p>Email: {{ user_info.get('email') }}</p>
             <span>To log out click <a class="logout-link" href="{{ url_for('get_logout') }}">here.</a></span>
         </div>
     </div>
