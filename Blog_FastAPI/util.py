@@ -2,6 +2,8 @@ from fastapi import Request, HTTPException
 from httpx import AsyncClient
 from starlette import status
 
+from Blog_FastAPI.config import config_settings
+
 
 async def verify_logged_in(request: Request) -> str:
     """dependency for returning token if user logged in"""
@@ -20,7 +22,7 @@ async def get_user_info(request: Request):
     compare if logged in user_id is the same as post.user_id and then display links to edit or delete own content."""
     if request.cookies.get("jlt"):
         header = {"Authorization": f"Bearer {request.cookies.get('jlt')}"}
-        async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
             resp = await ac.get("/user/me", headers=header)
 
         if resp.status_code == 401:

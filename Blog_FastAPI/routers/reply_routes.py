@@ -5,6 +5,7 @@ from httpx import AsyncClient
 from starlette import status
 
 from Blog_FastAPI.util import verify_logged_in
+from Blog_FastAPI.config import config_settings
 
 router = APIRouter()
 
@@ -40,7 +41,7 @@ async def reply_new_reply(
     header = {"Authorization": f"Bearer {token}"}
     body = {"body": form_data.get("body")}
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.post(f"/post/{post_id}/reply", json=body, headers=header)
 
     # catch unexpected errors
@@ -58,11 +59,10 @@ async def reply_new_reply(
 @router.get("/reply/{reply_id}/delete")
 async def get_delete_reply(reply_id: int, token: str = Depends(verify_logged_in)):
     """Delete Reply - pass data to backend api and handle any errors"""
-    # get reply info for later redirect
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    # get reply info for later redirect - check for errors
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/reply/{reply_id}")
 
-    # catch unexpected error
     if resp.status_code == 200:
         reply_info = resp.json()
 
@@ -81,7 +81,7 @@ async def get_delete_reply(reply_id: int, token: str = Depends(verify_logged_in)
     # send reply info to backend api
     header = {"Authorization": f"Bearer {token}"}
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.delete(f"/reply/{reply_id}", headers=header)
 
     # catch error for reply belonging to another user
@@ -106,7 +106,7 @@ async def get_update_reply(
     request: Request, reply_id: int, token: str = Depends(verify_logged_in)
 ):
     """Update Reply - filled form with existing reply info for user to modify"""
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/reply/{reply_id}")
 
     # if reply does not exist raise 404 error
@@ -144,7 +144,7 @@ async def post_update_reply(
     header = {"Authorization": f"Bearer {token}"}
     body = {"body": form_data.get("body")}
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.put(f"/reply/{reply_id}", json=body, headers=header)
 
     # catch error for reply belonging to another user

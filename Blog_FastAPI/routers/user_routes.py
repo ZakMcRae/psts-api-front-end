@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from httpx import AsyncClient
 
 from Blog_FastAPI.util import get_user_info, verify_logged_in
+from Blog_FastAPI.config import config_settings
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -13,7 +14,7 @@ templates = Jinja2Templates(directory="templates")
 async def home(request: Request):
     # if logged in redirect to recent activity
     if request.cookies.get("jlt"):
-        response = RedirectResponse(url=f"/recent", status_code=303)
+        response = RedirectResponse(url="/recent", status_code=303)
         return response
 
     # if not logged in return landing page
@@ -26,14 +27,14 @@ async def home(request: Request):
 async def get_recent_activity(request: Request):
     """Display 10 most recent posts with 3 replies each"""
     # get posts
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get("/posts/recent?skip=0&limit=10")
 
     posts = resp.json()
 
     # add 3 replies per post
     for post in posts:
-        async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
             resp = await ac.get(
                 f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
             )
@@ -50,6 +51,7 @@ async def get_recent_activity(request: Request):
             "title": "Recent Activity",
             "subtitle": "See what everybody has been up to",
             "user_info": user_info,
+            "blog_base_url": config_settings.blog_base_url,
         },
     )
 
@@ -70,7 +72,7 @@ async def get_my_posts(request: Request, token: str = Depends(verify_logged_in))
 async def get_users_posts(request: Request, user_id: int):
     """display specific user's recent posts with 3 replies each"""
     # get posts
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(
             f"/user/{user_id}/posts?skip=0&limit=10&sort-newest-first=true"
         )
@@ -79,7 +81,7 @@ async def get_users_posts(request: Request, user_id: int):
 
     # add 3 replies per post
     for i, post in enumerate(posts):
-        async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
             resp = await ac.get(
                 f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
             )
@@ -96,6 +98,7 @@ async def get_users_posts(request: Request, user_id: int):
             "title": f"{posts[0].get('username')}'s Posts",
             "subtitle": "Here's what I've been up to",
             "user_info": user_info,
+            "blog_base_url": config_settings.blog_base_url,
         },
     )
 
@@ -103,19 +106,19 @@ async def get_users_posts(request: Request, user_id: int):
 @router.get("/user/{user_id}")
 async def get_user_page(request: Request, user_id: int):
     # get user info
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/user/{user_id}")
 
     user_info = resp.json()
 
     # get list of users the page owner is following
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/user/{user_id}/followers")
 
     following = resp.json()
 
     # get list of users following page owner
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/user/{user_id}/following")
 
     followers = resp.json()
@@ -150,7 +153,7 @@ async def post_register_account(request: Request):
     }
 
     # send user data to backend API - create user endpoint
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.post("/user", json=body)
     response_detail = resp.json().get("detail")
 
@@ -198,7 +201,7 @@ async def post_login(request: Request):
     }
 
     # send user data to backend API - create user endpoint
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.post("/token", data=body)
 
     # check for incorrect username or password
@@ -255,7 +258,7 @@ async def get_follow_user(user_id: int, token: str = Depends(verify_logged_in)):
     # send info to backend API - follow user endpoint
     header = {"Authorization": f"Bearer {token}"}
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.post(f"/user/follow/{user_id}", headers=header)
 
     # catch if user already followed
@@ -274,7 +277,7 @@ async def get_unfollow_user(user_id: int, token: str = Depends(verify_logged_in)
     # send info to backend API - unfollow user endpoint
     header = {"Authorization": f"Bearer {token}"}
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.delete(f"/user/follow/{user_id}", headers=header)
 
     # catch if user already not followed
@@ -307,7 +310,7 @@ async def get_followed_users_posts(
     user_info = await get_user_info(request)
 
     # get list of users the page owner is following
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/user/{user_info.get('id')}/followers")
 
     following = resp.json()
@@ -315,7 +318,7 @@ async def get_followed_users_posts(
     posts = []
 
     for user in following:
-        async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
             resp = await ac.get(
                 f"/user/{user.get('id')}/posts?skip=0&limit=3&sort-newest-first=true"
             )
@@ -326,7 +329,7 @@ async def get_followed_users_posts(
 
     # add 3 replies per post
     for post in posts:
-        async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
             resp = await ac.get(
                 f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
             )
@@ -340,5 +343,6 @@ async def get_followed_users_posts(
             "title": "Followed User's Posts",
             "subtitle": "See what your friends have been up to",
             "user_info": user_info,
+            "blog_base_url": config_settings.blog_base_url,
         },
     )

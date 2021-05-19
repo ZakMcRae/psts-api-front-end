@@ -142,14 +142,16 @@
         if (type === 'Post') {
             modalTitle.textContent = 'Delete ' + type
             modalBody.textContent = 'This will delete this post and all replies to it. This cannot be undone.'
-            modalLink.href = `http://127.0.0.1:8080/post/${id}/delete`
+            // url_for does not work when passing a query parameter
+            modalLink.href = `{{ blog_base_url }}/post/${id}/delete`
         }
 
         // Reply specific modal for delete confirmation
         if (type === 'Reply') {
             modalTitle.textContent = 'Delete ' + type
             modalBody.textContent = 'This will delete the reply. This cannot be undone.'
-            modalLink.href = `http://127.0.0.1:8080/reply/${id}/delete`
+            // url_for does not work when passing a query parameter
+            modalLink.href = `{{ blog_base_url }}/reply/${id}/delete`
         }
 
     })

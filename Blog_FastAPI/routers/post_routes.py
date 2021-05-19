@@ -5,6 +5,7 @@ from httpx import AsyncClient
 from starlette import status
 
 from Blog_FastAPI.util import verify_logged_in, get_user_info
+from Blog_FastAPI.config import config_settings
 
 router = APIRouter()
 
@@ -46,7 +47,7 @@ async def post_new_post(request: Request, token: str = Depends(verify_logged_in)
         "body": form_data.get("body"),
     }
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.post("/post", json=body, headers=header)
 
     # check for incorrect username or password
@@ -66,7 +67,7 @@ async def get_delete_post(post_id: int, token: str = Depends(verify_logged_in)):
     """Delete Post - pass data to backend api and handle any errors"""
     header = {"Authorization": f"Bearer {token}"}
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.delete(f"/post/{post_id}", headers=header)
 
     # catch error for post belonging to another user
@@ -89,7 +90,7 @@ async def get_update_post(
     request: Request, post_id: int, token: str = Depends(verify_logged_in)
 ):
     """Update Post - filled form with existing post info for user to modify"""
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/post/{post_id}")
 
     # if post does not exist raise 404 error
@@ -135,7 +136,7 @@ async def post_update_post(
         "body": form_data.get("body"),
     }
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.put(f"/post/{post_id}", json=body, headers=header)
 
     # catch error for post belonging to another user
@@ -154,7 +155,7 @@ async def post_update_post(
 async def get_post(request: Request, post_id: int):
     """Display single post with up to 25 replies"""
     # get posts
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/post/{post_id}")
 
     if resp.status_code == 404:
@@ -166,7 +167,7 @@ async def get_post(request: Request, post_id: int):
     posts = resp.json()
 
     # get replies
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as ac:
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(
             f"/post/{post_id}/replies?skip=0&limit=25&sort-newest-first=false"
         )
@@ -184,5 +185,6 @@ async def get_post(request: Request, post_id: int):
             "request": request,
             "posts": posts,
             "user_info": user_info,
+            "blog_base_url": config_settings.blog_base_url,
         },
     )
