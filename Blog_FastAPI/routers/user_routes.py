@@ -80,7 +80,7 @@ async def get_users_posts(request: Request, user_id: int):
     posts = resp.json()
 
     # add 3 replies per post
-    for i, post in enumerate(posts):
+    for post in posts:
         async with AsyncClient(base_url=config_settings.api_base_url) as ac:
             resp = await ac.get(
                 f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
