@@ -37,16 +37,36 @@ async def get_recent_activity(request: Request, page: Optional[int] = 1):
     async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(f"/posts/recent?skip={skip}&limit=10")
 
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=resp.json().get("detail"),
+        )
+
     posts = resp.json()
 
-    # todo new api endpoint /post/replies
+    post_ids = [post.get("id") for post in posts]
+
+    # get replies of all posts in post_ids
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
+        resp = await ac.get("/posts/replies", params={"ids": post_ids})
+
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=resp.json().get("detail"),
+        )
+
+    replies = resp.json()
+
     # add 3 replies per post
     for post in posts:
-        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-            resp = await ac.get(
-                f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
-            )
-        post["replies"] = resp.json()
+        post["replies"] = []
+        for reply in replies:
+            if post.get("id") == reply.get("post_id"):
+                post["replies"].append(reply)
+                if len(post["replies"]) == 3:
+                    break
 
     # get user info to display options for editing or deleting own posts/replies
     user_info = await get_user_info(request)
