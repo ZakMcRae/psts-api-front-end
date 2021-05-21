@@ -40,18 +40,37 @@
 
 
                 <div>
+{#                    Logged in user given options to edit or delete own content #}
                     {% if user_info['id'] == post.user_id %}
                         <div class="dropdown float-end">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
                                     id="dropdownMenuButton1"
                                     data-bs-toggle="dropdown" aria-expanded="false"></button>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+
                                 <li><a class="dropdown-item"
-                                       href="{{ url_for('get_update_post', post_id=post.id) }}">Edit</a></li>
+                                       href="{{ url_for('reply_new_reply', post_id=post.id) }}">Create Reply</a>
+                                <li><a class="dropdown-item"
+                                    href="{{ url_for('get_update_post', post_id=post.id) }}">Edit</a></li>
                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-type="Post" data-bs-id="{{ post.id }}"
-                                       href="#confdeleteModal">Delete</a></li>
+                                    href="#confdeleteModal">Delete</a></li>
+                                </li>
                             </ul>
                         </div>
+
+{#                      If post doesn't belong to user give option to make a new reply #}
+                    {% else %}
+                        <div class="dropdown float-end">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1"
+                                    data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('reply_new_reply', post_id=post.id) }}">Create Reply</a>
+                                </li>
+                            </ul>
+                        </div>
+
                     {% endif %}
                     <h3><a class="title-link" href="{{ url_for('get_post', post_id=post.id) }}">{{ post.title }}</a>
                     </h3>
