@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -13,26 +15,31 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
 async def home(request: Request):
-    # if logged in redirect to recent activity
+    """If logged in return recent activity, otherwise show landing page"""
     if request.cookies.get("jlt"):
         response = RedirectResponse(url="/recent", status_code=303)
         return response
 
-    # if not logged in return landing page
     return templates.TemplateResponse(
         "landing.html", {"request": request, "title": "Home"}
     )
 
 
 @router.get("/recent")
-async def get_recent_activity(request: Request):
-    """Display 10 most recent posts with 3 replies each"""
+async def get_recent_activity(request: Request, page: Optional[int] = 1):
+    """Display 10 most recent posts with 3 replies each. Pagination to allow viewing of older posts"""
     # get posts
+    if page == 1:
+        skip = 0
+    else:
+        skip = page * 10 - 10
+
     async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-        resp = await ac.get("/posts/recent?skip=0&limit=10")
+        resp = await ac.get(f"/posts/recent?skip={skip}&limit=10")
 
     posts = resp.json()
 
+    # todo new api endpoint /post/replies
     # add 3 replies per post
     for post in posts:
         async with AsyncClient(base_url=config_settings.api_base_url) as ac:
@@ -53,6 +60,7 @@ async def get_recent_activity(request: Request):
             "subtitle": "See what everybody has been up to",
             "user_info": user_info,
             "blog_base_url": config_settings.blog_base_url,
+            "page": page,
         },
     )
 
