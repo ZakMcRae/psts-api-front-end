@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from httpx import AsyncClient
+from starlette import status
 
 from Blog_FastAPI.util import get_user_info, verify_logged_in
 from Blog_FastAPI.config import config_settings
@@ -309,31 +310,36 @@ async def get_followed_users_posts(
 ):
     user_info = await get_user_info(request)
 
-    # get list of users the page owner is following
+    # send data to backend API - get posts of followed users
+    header = {"Authorization": f"Bearer {token}"}
     async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-        resp = await ac.get(f"/user/{user_info.get('id')}/followers")
+        resp = await ac.get("/posts/following", headers=header)
 
-    following = resp.json()
+    # catch if user has no followers
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=resp.json().get("detail"),
+        )
 
-    posts = []
+    posts = resp.json()
 
-    for user in following:
-        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-            resp = await ac.get(
-                f"/user/{user.get('id')}/posts?skip=0&limit=3&sort-newest-first=true"
-            )
+    post_ids = [post.get("id") for post in posts]
 
-        posts += resp.json()
+    # get replies of all posts in post_ids
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
+        resp = await ac.get("/posts/replies", params={"ids": post_ids})
 
-    posts = sorted(posts, key=lambda item: item["date_created"], reverse=True)
+    replies = resp.json()
 
     # add 3 replies per post
     for post in posts:
-        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-            resp = await ac.get(
-                f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
-            )
-        post["replies"] = resp.json()
+        post["replies"] = []
+        for reply in replies:
+            if post.get("id") == reply.get("post_id"):
+                post["replies"].append(reply)
+                if len(post["replies"]) == 3:
+                    break
 
     return templates.TemplateResponse(
         "post/show_posts.html",
