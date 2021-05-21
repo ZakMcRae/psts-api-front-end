@@ -28,14 +28,8 @@ async def home(request: Request):
 @router.get("/recent")
 async def get_recent_activity(request: Request, page: Optional[int] = 1):
     """Display 10 most recent posts with 3 replies each. Pagination to allow viewing of older posts"""
-    # get posts
-    if page == 1:
-        skip = 0
-    else:
-        skip = page * 10 - 10
-
     async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-        resp = await ac.get(f"/posts/recent?skip={skip}&limit=10")
+        resp = await ac.get(f"/posts/recent?skip={page*10-10}&limit=10")
 
     if resp.status_code == 404:
         raise HTTPException(
@@ -98,23 +92,44 @@ async def get_my_posts(request: Request, token: str = Depends(verify_logged_in))
 
 
 @router.get("/user/{user_id}/posts")
-async def get_users_posts(request: Request, user_id: int):
+async def get_users_posts(request: Request, user_id: int, page: Optional[int] = 1):
     """display specific user's recent posts with 3 replies each"""
     # get posts
     async with AsyncClient(base_url=config_settings.api_base_url) as ac:
         resp = await ac.get(
-            f"/user/{user_id}/posts?skip=0&limit=10&sort-newest-first=true"
+            f"/user/{user_id}/posts?skip={page*10-10}&limit=10&sort-newest-first=true"
+        )
+
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=resp.json().get("detail"),
         )
 
     posts = resp.json()
 
+    post_ids = [post.get("id") for post in posts]
+
+    # get replies of all posts in post_ids
+    async with AsyncClient(base_url=config_settings.api_base_url) as ac:
+        resp = await ac.get("/posts/replies", params={"ids": post_ids})
+
+    if resp.status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=resp.json().get("detail"),
+        )
+
+    replies = resp.json()
+
     # add 3 replies per post
     for post in posts:
-        async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-            resp = await ac.get(
-                f"/post/{post.get('id')}/replies?skip=0&limit=3&sort-newest-first=false"
-            )
-        post["replies"] = resp.json()
+        post["replies"] = []
+        for reply in replies:
+            if post.get("id") == reply.get("post_id"):
+                post["replies"].append(reply)
+                if len(post["replies"]) == 3:
+                    break
 
     # get user info to display options for editing or deleting own posts/replies
     user_info = await get_user_info(request)
@@ -128,6 +143,7 @@ async def get_users_posts(request: Request, user_id: int):
             "subtitle": "Here's what I've been up to",
             "user_info": user_info,
             "blog_base_url": config_settings.blog_base_url,
+            "page": page,
         },
     )
 
@@ -334,9 +350,11 @@ async def get_profile(request: Request, token: str = Depends(verify_logged_in)):
 # token not used by dependency - confirms login
 @router.get("/following/posts")
 async def get_followed_users_posts(
-    request: Request, token: str = Depends(verify_logged_in)
+    request: Request, token: str = Depends(verify_logged_in), page: Optional[int] = 1
 ):
     user_info = await get_user_info(request)
+
+    # todo infinite looping upon next page - not skip or limit functionality
 
     # send data to backend API - get posts of followed users
     header = {"Authorization": f"Bearer {token}"}
@@ -378,5 +396,6 @@ async def get_followed_users_posts(
             "subtitle": "See what your friends have been up to",
             "user_info": user_info,
             "blog_base_url": config_settings.blog_base_url,
+            "page": page,
         },
     )
