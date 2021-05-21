@@ -140,31 +140,34 @@
 
         {% endfor %}
 
-    {% if page < 2 %}
-        <div class="d-flex justify-content-center pb-2">
-            <h3 class="mx-1">Page {{ page }}</h3>
-            {% if posts|length > 9 %}
-                <a class="btn btn-secondary" href="{{ blog_base_url + request.url.path }}?page={{ page + 1 }}"><i
-                        class="bi bi-chevron-right"></i></a>
-            {% endif %}
-        </div>
+    {% if request.url.path[0:6] == '/post/' %}
     {% else %}
-        <div class="d-flex justify-content-center pb-2">
-            <a class="btn btn-secondary" href="{{ blog_base_url + request.url.path }}?page={{ page - 1 }}"><i
-                    class="bi bi-chevron-left"></i></a>
-            <h3 class="mx-1">Page {{ page }}</h3>
-            {% if posts|length > 9 %}
-                <a class="btn btn-secondary" href="{{ blog_base_url + request.url.path }}?page={{ page + 1 }}"><i
-                        class="bi bi-chevron-right"></i></a>
-            {% endif %}
-        </div>
+        {% if page < 2 %}
+            <div class="d-flex justify-content-center pb-2">
+                <h3 class="mx-1">Page {{ page }}</h3>
+                {% if posts|length > 9 %}
+                    <a class="btn btn-secondary" href="{{ blog_base_url + request.url.path }}?page={{ page + 1 }}"><i
+                            class="bi bi-chevron-right"></i></a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="d-flex justify-content-center pb-2">
+                <a class="btn btn-secondary" href="{{ blog_base_url + request.url.path }}?page={{ page - 1 }}"><i
+                        class="bi bi-chevron-left"></i></a>
+                <h3 class="mx-1">Page {{ page }}</h3>
+                {% if posts|length > 9 %}
+                    <a class="btn btn-secondary" href="{{ blog_base_url + request.url.path }}?page={{ page + 1 }}"><i
+                            class="bi bi-chevron-right"></i></a>
+                {% endif %}
+            </div>
 
 
-        </div>
+            </div>
+        {% endif %}
     {% endif %}
 
 
-    </div>
+
 
 <script>
     let confdeleteModal = document.getElementById('confdeleteModal')
