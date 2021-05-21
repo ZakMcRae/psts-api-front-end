@@ -354,12 +354,12 @@ async def get_followed_users_posts(
 ):
     user_info = await get_user_info(request)
 
-    # todo infinite looping upon next page - not skip or limit functionality
-
     # send data to backend API - get posts of followed users
     header = {"Authorization": f"Bearer {token}"}
     async with AsyncClient(base_url=config_settings.api_base_url) as ac:
-        resp = await ac.get("/posts/following", headers=header)
+        resp = await ac.get(
+            f"/posts/following?skip={page*10-10}&limit=10", headers=header
+        )
 
     # catch if user has no followers
     if resp.status_code == 404:
