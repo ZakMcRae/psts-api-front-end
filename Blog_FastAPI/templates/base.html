@@ -26,6 +26,7 @@
 {# nav bar #}
 <nav class="navbar navbar-expand-md py-0">
     <div class="container-fluid bg-main-mid py-2 bg-main">
+    <a class="navbar-brand" href="{{ url_for('home') }}"><img width="40" height="30" src="/static/images/logo.png" alt=""></a>
         <button class="navbar-toggler navbar-dark ms-auto" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +34,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav me-auto">
-                <a class="navbar navbar-brand" href="{{ url_for('home') }}"><img width="40" height="30" src="/static/images/logo.png" alt=""></a>
                 {# If logged in #}
                 {% if request.cookies.get('jlt') %}
                     <li class="nav-item dropdown">
