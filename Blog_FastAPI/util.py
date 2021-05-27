@@ -2,7 +2,7 @@ from fastapi import Request, HTTPException
 from httpx import AsyncClient
 from starlette import status
 
-from Blog_FastAPI.config import config_settings
+from config import config_settings
 
 
 async def verify_logged_in(request: Request) -> str:

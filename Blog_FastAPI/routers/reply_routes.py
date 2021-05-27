@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from starlette import status
 
 from Blog_FastAPI.util import verify_logged_in
-from Blog_FastAPI.config import config_settings
+from config import config_settings
 
 router = APIRouter()
 
