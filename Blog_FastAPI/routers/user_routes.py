@@ -10,7 +10,7 @@ from Blog_FastAPI.util import get_user_info, verify_logged_in
 from config import config_settings
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=config_settings.template_file_path)
 
 
 @router.get("/")

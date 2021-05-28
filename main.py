@@ -5,10 +5,11 @@ from fastapi.templating import Jinja2Templates
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
 
-from Blog_FastAPI.routers import user_routes, post_routes, dev_routes, reply_routes
+from Blog_FastAPI.routers import user_routes, post_routes, reply_routes
+from config import config_settings
 
 # html template for handling errors
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=config_settings.template_file_path)
 
 
 async def http_exception_handler(request: Request, exception: StarletteHTTPException):
@@ -24,7 +25,9 @@ exception_handlers = {StarletteHTTPException: http_exception_handler}
 app = fastapi.FastAPI(
     exception_handlers=exception_handlers, docs_url=None, redoc_url=None
 )
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount(
+    "/static", StaticFiles(directory=config_settings.static_file_path), name="static"
+)
 
 
 def configure_routing():
@@ -32,7 +35,6 @@ def configure_routing():
     app.include_router(user_routes.router)
     app.include_router(post_routes.router)
     app.include_router(reply_routes.router)
-    app.include_router(dev_routes.router)
 
 
 if __name__ == "__main__":
