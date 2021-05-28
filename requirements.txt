@@ -1,8 +1,9 @@
-fastapi
-uvicorn
-httpx
-pydantic
+fastapi==0.65.1
+uvicorn==0.13.4
+starlette==0.14.2
+pydantic==1.8.2
+httpx==0.18.1
+
 jinja2
 aiofiles
 python-multipart
-starlette == 0.14.2
