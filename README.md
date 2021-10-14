@@ -1,6 +1,6 @@
 # psts-api-front-end
 A website that serves as a front end for a blog API.  
-Check it out here at [fastapi.psts.xyz/](https://fastapi.psts.xyz/).
+Check it out here at [fastapi.psts.xyz](https://fastapi.psts.xyz).
 The backend is here at [api.psts.xyz](https://api.psts.xyz/).
 
 ## Description
