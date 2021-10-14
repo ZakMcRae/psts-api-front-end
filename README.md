@@ -4,7 +4,7 @@ Check it out here at [fastapi.psts.xyz](https://fastapi.psts.xyz).
 The backend is here at [api.psts.xyz](https://api.psts.xyz/).
 
 ## Description
-The purpose of this site is to be a user interface to interact with the backend for data. 
+The purpose of this site is to be a user interface to interact with the backend for data. The complete project was more about learning the backend API side of things. This front end was not the focus of the project. 
 It has pages for users to register and log in with. There are pages to view all recent posts, posts from all other user's that the current user has followed and pages to view specific user's posts.
 There are forms for creating and editing posts and replies.
 I deployed this app myself on a Linode server remotely through ssh using nginx and uvicorn.
