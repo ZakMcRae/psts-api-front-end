@@ -9,6 +9,8 @@ It has pages for users to register and log in with. There are pages to view all 
 There are forms for creating and editing posts and replies.
 I deployed this app myself on a Linode server remotely through ssh using nginx and uvicorn.
 
+![](https://i.imgur.com/KfcDfeH.png)
+
 ## Learned on project
 - got a familiarity to FastAPI web framework (was very similar coming from Flask)
 - learned to make back end and front end and connect the two  
